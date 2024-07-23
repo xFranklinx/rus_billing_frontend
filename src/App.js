@@ -9,18 +9,28 @@ import { jwtDecode } from 'jwt-decode'
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkModeActivated, setDarkModeActivated] = useState(false);
 
   const handleThemeChange = () => {
-    setDarkMode(!darkMode);
+    setDarkModeActivated(!darkModeActivated);
   };
 
   const handleLogin = () => {
     setIsAuthenticated(!isAuthenticated)
   }
 
-  // Check if the token is still valid on page load. If it is, set the isAuthenticated state to true. Otherwise, remove the token from local storage.
   useEffect(() => {
+    // Retrieve the theme preference from localStorage
+    // Theme is saved from the TopNavbar component in MainLayout.js when the user toggles the theme switch
+    const retrieveTheme = () => {
+      const darkModeActivated = localStorage.getItem('theme');
+      if (darkModeActivated) {
+        setDarkModeActivated(JSON.parse(darkModeActivated));
+      }
+    }
+    retrieveTheme()
+
+    // Check if the token is still valid on page load. If it is, set the isAuthenticated state to true. Otherwise, remove the token from local storage.
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       try {
@@ -36,11 +46,14 @@ const App = () => {
     }
   }, []);
 
+
+
+
   return (
     <AuthProvider>
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+      <ThemeProvider theme={darkModeActivated ? darkTheme : lightTheme}>
         <Router>
-          {isAuthenticated ? <MainLayout handleLogin={handleLogin} handleThemeChange={handleThemeChange} darkMode={darkMode} /> : <Login handleLogin={handleLogin} />}
+          {isAuthenticated ? <MainLayout handleLogin={handleLogin} handleThemeChange={handleThemeChange} darkModeActivated={darkModeActivated} /> : <Login handleLogin={handleLogin} />}
         </Router>
       </ThemeProvider>
     </AuthProvider>

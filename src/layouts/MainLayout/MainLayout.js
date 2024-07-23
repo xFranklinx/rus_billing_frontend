@@ -32,7 +32,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 
-const MainLayout = ({ handleLogin, handleThemeChange, darkMode }) => {
+const MainLayout = ({ handleLogin, handleThemeChange, darkModeActivated }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSidebar = () => {
@@ -42,7 +42,7 @@ const MainLayout = ({ handleLogin, handleThemeChange, darkMode }) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <TopNavbar sidebarOpen={sidebarOpen} handleSidebar={handleSidebar} handleLogin={handleLogin} handleThemeChange={handleThemeChange} darkMode={darkMode} />
+      <TopNavbar sidebarOpen={sidebarOpen} handleSidebar={handleSidebar} handleLogin={handleLogin} handleThemeChange={handleThemeChange} darkModeActivated={darkModeActivated} />
       <Sidebar sidebarOpen={sidebarOpen} handleSidebar={handleSidebar} />
 
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

@@ -52,7 +52,8 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange, darkMode }) => {
+
+const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange, darkModeActivated }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { logout } = useContext(AuthContext);
 
@@ -71,6 +72,15 @@ const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange,
   };
 
   const handleUpdateTheme = () => {
+    // Saving the theme preference to localStorage so it persists on page reload
+    if (darkModeActivated) {
+      localStorage.setItem('theme', JSON.stringify('light'));
+    } else {
+      localStorage.setItem('theme', JSON.stringify('dark'));
+    }
+
+    console.log(localStorage.getItem('theme'))
+
     handleClose();
     handleThemeChange();
   };
@@ -139,9 +149,9 @@ const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange,
 
             <MenuItem onClick={handleUpdateTheme}>
               <ListItemIcon>
-                {darkMode ? <Brightness7Icon fontSize="small" /> : <Brightness4Icon fontSize="small" />}
+                {darkModeActivated ? <Brightness7Icon fontSize="small" /> : <Brightness4Icon fontSize="small" />}
               </ListItemIcon>
-              {darkMode ? 'Light Mode' : 'Dark Mode'}
+              {darkModeActivated ? 'Light Mode' : 'Dark Mode'}
             </MenuItem>
 
             <Divider />
