@@ -1,0 +1,6 @@
+/* styles.css */
+body.scroll-lock {
+  padding-right: 17px;
+  /* Adjust this value if needed to match the scrollbar width */
+  overflow: hidden;
+}
