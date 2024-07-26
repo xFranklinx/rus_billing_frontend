@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableRow, TableCell, TableBody, Button, TableSortLabel } from '@mui/material';
-import axios from 'axios';
 import EditUserModal from './EditUserModal';
+import { getLeadsAndManagers } from 'utils/handleApiCall';
 
 const UsersTable = ({ usersData }) => {
   const [open, setOpen] = useState(false);
@@ -14,18 +14,17 @@ const UsersTable = ({ usersData }) => {
 
   useEffect(() => {
     const runSetup = async () => {
-      await getLeadsAndManagers();
+      await handleGetLeadsAndManagers();
       generateTableData();
     }
 
     runSetup()
   }, [users, order, orderBy]);
 
-  const getLeadsAndManagers = async () => {
+  const handleGetLeadsAndManagers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/v1/users/leadsAndManagers');
-      const data = await response.json();
-      setLeadsAndManagers(data.data);
+      const response = await getLeadsAndManagers();
+      setLeadsAndManagers(response.data);
     } catch (error) {
       console.error('Error fetching leads and managers:', error);
       setLeadsAndManagers([]);
@@ -42,16 +41,9 @@ const UsersTable = ({ usersData }) => {
     setSelectedUser(null);
   };
 
-  const updateUser = async (updatedUser) => {
-    const response = await axios.put(`http://localhost:5000/api/v1/users/${updatedUser.data._id}`, updatedUser.data, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-    })
-
+  const handleUpdateUser = async (updatedUser) => {
     setUsers(prevUsers =>
-      prevUsers.map(user => user._id === updatedUser.data._id ? response.data.data : user)
+      prevUsers.map(user => user._id === updatedUser._id ? updatedUser : user)
     )
 
     handleClose();
@@ -169,7 +161,7 @@ const UsersTable = ({ usersData }) => {
         open={open}
         handleClose={handleClose}
         user={selectedUser}
-        updateUser={updateUser}
+        handleUpdateUser={handleUpdateUser}
         leadsAndManagers={leadsAndManagers}
       />
     </>

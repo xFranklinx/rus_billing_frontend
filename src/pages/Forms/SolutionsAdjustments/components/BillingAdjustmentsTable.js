@@ -14,6 +14,8 @@ import {
 import { Edit } from '@mui/icons-material';
 import axios from 'axios';
 import AdjustmentModal from './AdjustmentModal';
+import { getAllSolutionBillingAdjustments, getUser } from 'utils/handleApiCall';
+
 
 const BillingAdjustmentTable = () => {
   const [data, setData] = useState(null);
@@ -47,31 +49,17 @@ const BillingAdjustmentTable = () => {
   });
 
   useEffect(() => {
-    const getToken = () => {
-      return localStorage.getItem('token'); // Adjust according to your storage method
-    };
-
     const fetchFormData = async () => {
       try {
-        const token = getToken();
-        const response = await axios.get('http://localhost:5000/api/v1/forms/solutionsBillingAdjustments', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        console.log(response.data);
-        setData(response.data);
+        const formResponses = await getAllSolutionBillingAdjustments();
+        setData(formResponses.data);
 
         // Fetch user data for each submittedBy ID
-        const userIds = response.data.data.map(element => element.submittedBy);
+        const userIds = formResponses.data.map(element => element.submittedBy);
         const uniqueUserIds = [...new Set(userIds)]; // Ensure unique IDs only
-        const userResponses = await Promise.all(uniqueUserIds.map(id => axios.get(`http://localhost:5000/api/v1/users/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })));
+        const userResponses = await Promise.all(uniqueUserIds.map(userId => getUser(userId)));
         const users = userResponses.reduce((acc, userResponse) => {
-          acc[userResponse.data.data._id] = userResponse.data.data; // Use data.data to get the actual user object
+          acc[userResponse.data._id] = userResponse.data; // Use data.data to get the actual user object
           return acc;
         }, {});
         setUserData(users);
@@ -84,8 +72,8 @@ const BillingAdjustmentTable = () => {
   }, []);
 
   useEffect(() => {
-    if (data && data.data && Object.keys(userData).length > 0) {
-      const tableRows = data.data.map(element => (
+    if (data && Object.keys(userData).length > 0) {
+      const tableRows = data.map(element => (
         <TableRow key={element._id}>
           <TableCell>{element.formId}</TableCell>
           <TableCell>{userData[element.submittedBy] ? userData[element.submittedBy].name : 'Loading...'}</TableCell>

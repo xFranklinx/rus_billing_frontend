@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { createTheme, ThemeProvider, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container, MenuItem, Select, InputLabel, FormControl, FormHelperText } from '@mui/material/';
 import rusLogo from 'static/randstad_staffing_logo.jpg';
 import { AuthContext } from 'contexts/AuthContext';
+import { getUsers } from 'utils/handleApiCall';
 
 const defaultTheme = createTheme();
 
@@ -14,9 +15,8 @@ const Login = ({ handleLogin }) => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch('http://localhost:5000/api/v1/users');
-      const data = await response.json();
-      setUsers(data.data); // Adjust based on your API response structure
+      const response = await getUsers();
+      setUsers(response.data); // Adjust based on your API response structure
     };
     fetchUsers();
   }, []);

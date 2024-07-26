@@ -1,147 +1,245 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Paper, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, TableSortLabel, Modal, Box, TextField, MenuItem } from '@mui/material';
-import axios from 'axios';
 
-const ReusableTableWithModal = ({ data, fields, modalFields, apiUrl, token }) => {
+/**
+ * ReusableTableWithModal - A component that displays data in a sortable table with an edit modal.
+ * 
+ * @param {Object} props
+ * @param {Object} props.data - The data to be displayed in the table
+ * @param {Array} props.fields - Array of objects defining table columns
+ * @param {Array} props.modalFields - Array of objects defining form fields in the modal
+ * @param {Function} props.apiHandlerFunction - Function to handle API calls for updates
+ * @param {Function} [props.customModalContent] - Optional function to render custom modal content
+ */
+const ReusableTableWithModal = ({
+  data,
+  fields,
+  modalFields,
+  apiHandlerFunction,
+  customModalContent
+}) => {
+  // State for modal visibility
   const [open, setOpen] = useState(false);
+
+  // State for the currently selected item for editing
   const [selectedItem, setSelectedItem] = useState(null);
-  const [items, setItems] = useState(data || []);
+
+  // State for all items in the table
+  const [items, setItems] = useState([]);
+
+  // State for current sort order (ascending or descending)
   const [order, setOrder] = useState('desc');
+
+  // State for the field currently being used for sorting
   const [orderBy, setOrderBy] = useState(fields[0].field);
+
+  // State for the form data in the edit modal
   const [formData, setFormData] = useState({});
 
+
+  // Effect to initialize or update items when data prop changes
   useEffect(() => {
-    setFormData(modalFields.reduce((acc, field) => {
-      acc[field.name] = selectedItem ? selectedItem[field.name] || '' : '';
-      return acc;
-    }, {}));
+    setItems(data?.data || createSkeletonData());
+  }, [data, fields]);
+
+
+  // Effect to update form data when selected item changes
+  useEffect(() => {
+    // Create an object with all fields from modalFields, 
+    // populated with data from the selected item (if available)
+    setFormData(modalFields.reduce((acc, field) => ({
+      ...acc,
+      [field.name]: selectedItem?.[field.name] || ''
+    }), {}));
   }, [selectedItem, modalFields]);
 
-  // If no data is passed, create a table with 5 skeleton rows
-  if (!items) {
-    setItems([...Array(5)].map((_, index) => (
-      <TableRow key={index}>
-        {modalFields.map((field) => (
-          <TableCell key={field.name}>Loading...</TableCell>
-        ))}
-      </TableRow>
-    )))
-  }
 
+  /**
+   * Creates skeleton data for loading state
+   * @returns {Array} Array of skeleton data objects
+   */
+  const createSkeletonData = () =>
+    Array(5).fill().map((_, index) => ({
+      _id: `skeleton-${index}`,
+      ...fields.reduce((acc, field) => ({ ...acc, [field.field]: 'Loading...' }), {})
+    }));
+
+
+  // Memoized sorted items to prevent unnecessary re-sorting
+  const sortedItems = useMemo(() =>
+    [...items].sort((a, b) =>
+      (a[orderBy] < b[orderBy] ? -1 : 1) * (order === 'asc' ? 1 : -1)
+    ), [items, order, orderBy]);
+
+
+  /**
+   * Opens the edit modal for a specific item
+   * @param {Object} item - The item to be edited
+   */
   const handleOpen = (item) => {
     setSelectedItem(item);
     setOpen(true);
   };
 
+
+  /**
+   * Closes the edit modal and resets the selected item
+   */
   const handleClose = () => {
     setOpen(false);
     setSelectedItem(null);
   };
 
+
+  /**
+   * Handles changes in the form fields
+   * @param {Object} e - The event object from the input change
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+
+  /**
+   * Handles the submission of the edit form
+   */
   const handleSubmit = async () => {
     try {
-      const response = await axios.put(`${apiUrl}/${formData._id}`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const updatedItem = response.data.data;
-      setItems((prevItems) => prevItems.map((item) => (item._id === updatedItem._id ? updatedItem : item)));
+      // Call the API handler function with the form data
+      const response = await apiHandlerFunction(formData._id, formData);
+
+      // Update the items state with the new data
+      setItems(prevItems => prevItems.map(item => {
+        // If this is the item that was just updated (matching IDs)
+        if (item._id === response.data._id) {
+          // Return the updated item data from the API response
+          return response.data;
+        }
+        // For all other items, return them unchanged
+        return item;
+      }));
+
+      // Close the modal after successful update
       handleClose();
     } catch (error) {
       console.error('Error updating item:', error);
     }
   };
 
+
+  /**
+   * Handles the request to sort the table
+   * @param {string} property - The property to sort by
+   */
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const sortedItems = items ? [...items].sort((a, b) => {
-    if (order === 'asc') {
-      return a[orderBy] < b[orderBy] ? -1 : 1;
-    } else {
-      return a[orderBy] > b[orderBy] ? -1 : 1;
-    }
-  }) : null;
 
-  const tableRows = sortedItems ? sortedItems.map((item) => (
-    <TableRow key={item._id}>
-      {fields.map((field) => (
-        <TableCell key={field.field}>{item[field.field]}</TableCell>
+  /**
+   * Renders the table header with sort functionality
+   * @returns {JSX.Element} The table header JSX
+   */
+  const renderTableHeader = () => (
+    <TableHead>
+      <TableRow>
+        {fields.map(({ field, label }) => (
+          <TableCell key={field}>
+            <TableSortLabel
+              active={orderBy === field}
+              direction={orderBy === field ? order : 'asc'}
+              onClick={() => handleRequestSort(field)}
+            >
+              {label}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+        <TableCell>Actions</TableCell>
+      </TableRow>
+    </TableHead>
+  );
+
+
+  /**
+   * Renders the table body with all items
+   * @returns {JSX.Element} The table body JSX
+   */
+  const renderTableBody = () => (
+    <TableBody>
+      {sortedItems.map((item) => (
+        <TableRow key={item._id}>
+          {fields.map(({ field }) => (
+            <TableCell key={field}>{item[field]}</TableCell>
+          ))}
+          <TableCell>
+            <Button onClick={() => handleOpen(item)}>Edit</Button>
+          </TableCell>
+        </TableRow>
       ))}
-      <TableCell>
-        <Button onClick={() => handleOpen(item)}>Edit</Button>
-      </TableCell>
-    </TableRow>
-  )) : null;
+    </TableBody>
+  );
+
+
+  /**
+   * Renders the default modal content
+   * @returns {JSX.Element} The default modal content JSX
+   */
+  const renderDefaultModalContent = () => (
+    <Box sx={modalStyle}>
+      <h2>Edit Item</h2>
+      {modalFields.map(({ name, label, select, options }) => (
+        <TextField
+          key={name}
+          name={name}
+          label={label}
+          value={formData[name]}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          select={select}
+        >
+          {select && options.map(({ value, label }) => (
+            <MenuItem key={value} value={value}>{label}</MenuItem>
+          ))}
+        </TextField>
+      ))}
+      <Button sx={{ mr: 1 }} onClick={handleClose} variant="contained" color="error">
+        Cancel
+      </Button>
+      <Button onClick={handleSubmit} variant="contained" color="primary">
+        Save
+      </Button>
+    </Box>
+  );
+
 
   return (
     <Box>
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
-            <TableRow>
-              {fields.map((field) => (
-                <TableCell key={field.field}>
-                  <TableSortLabel
-                    active={orderBy === field.field}
-                    direction={orderBy === field.field ? order : 'asc'}
-                    onClick={() => handleRequestSort(field.field)}
-                  >
-                    {field.label}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableRows}
-          </TableBody>
+          {renderTableHeader()}
+          {renderTableBody()}
         </Table>
       </TableContainer>
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{ ...modalStyle }}>
-          <h2>Edit Item</h2>
-          {modalFields.map((field) => (
-            <TextField
-              key={field.name}
-              name={field.name}
-              label={field.label}
-              value={formData[field.name]}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              select={field.select}
-            >
-              {field.select && field.options.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          ))}
-          <Button sx={{ mr: 1 }} onClick={handleClose} variant="contained" color="error">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
-            Save
-          </Button>
-        </Box>
+        {customModalContent
+          ? customModalContent({
+            formData,
+            handleChange,
+            handleSubmit,
+            handleClose,
+            selectedItem
+          })
+          : renderDefaultModalContent()}
       </Modal>
     </Box>
   );
 };
 
+// Styles for the modal
 const modalStyle = {
   position: 'absolute',
   top: '50%',

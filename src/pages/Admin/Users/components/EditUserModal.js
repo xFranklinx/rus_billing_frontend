@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, TextField, Button, MenuItem } from '@mui/material';
 import axios from 'axios';
+import { updateUser } from 'utils/handleApiCall';
 
-const EditUserModal = ({ open, handleClose, user, updateUser, leadsAndManagers = [] }) => {
+const EditUserModal = ({ open, handleClose, user, handleUpdateUser, leadsAndManagers = [] }) => {
   const [formData, setFormData] = useState({
     _id: '',
     name: '',
@@ -39,15 +40,8 @@ const EditUserModal = ({ open, handleClose, user, updateUser, leadsAndManagers =
         formDataCopy.manager = null;
       }
 
-      const response = await axios.put(`http://localhost:5000/api/v1/users/${formDataCopy._id}`, formDataCopy, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      console.log('User updated:', response.data);
-      updateUser(response.data);
-      handleClose();
+      const response = await updateUser(formDataCopy._id, formDataCopy)
+      handleUpdateUser(response.data)
     } catch (error) {
       console.error('Error updating user:', error);
     }
