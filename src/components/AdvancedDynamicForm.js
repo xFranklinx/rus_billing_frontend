@@ -18,12 +18,15 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
-const EnhancedDynamicForm = ({
+const AdvancedDynamicForm = ({
   formConfig,
   onSubmit,
   initialData = {},
   isReadOnly = false,
-  customerOptions = []
+  customerOptions = [],
+  isEditing,
+  onEdit,
+  onClose
 }) => {
   const [formData, setFormData] = useState({});
   const [activeStep, setActiveStep] = useState(0);
@@ -187,6 +190,38 @@ const EnhancedDynamicForm = ({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const renderButtons = () => {
+    if (isReadOnly) {
+      return (
+        <Button variant="contained" color="primary" onClick={onEdit}>
+          Edit
+        </Button>
+      );
+    }
+
+    return (
+      <>
+        {activeStep > 0 && (
+          <Button variant="outlined" onClick={handleBack}>
+            Back
+          </Button>
+        )}
+        <Button variant="outlined" color="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        {activeStep < formConfig.pages.length - 1 ? (
+          <Button variant="contained" color="primary" onClick={handleNext}>
+            Next
+          </Button>
+        ) : (
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Submit
+          </Button>
+        )}
+      </>
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       {formConfig.useWizard ? (
@@ -200,28 +235,8 @@ const EnhancedDynamicForm = ({
           </Stepper>
           <Box sx={{ mt: 2 }}>
             {renderStepContent(activeStep)}
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Button
-                color="secondary"
-                onClick={handleClear}
-                sx={{ mr: 1 }}
-              >
-                Clear
-              </Button>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button
-                onClick={activeStep === formConfig.pages.length - 1 ? handleSubmit : handleNext}
-              >
-                {activeStep === formConfig.pages.length - 1 ? 'Submit' : 'Next'}
-              </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2 }}>
+              {renderButtons()}
             </Box>
           </Box>
         </>
@@ -232,32 +247,16 @@ const EnhancedDynamicForm = ({
               {page.sections.map((section, sectionIndex) => renderSection(section, sectionIndex))}
             </React.Fragment>
           ))}
-          {!isReadOnly && (
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Button
-                color="secondary"
-                onClick={handleClear}
-                sx={{ mr: 1 }}
-              >
-                Clear
-              </Button>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-              >
-                Submit
-              </Button>
-            </Box>
-          )}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, gap: 2 }}>
+            {renderButtons()}
+          </Box>
         </>
       )}
     </form>
   );
 };
 
-EnhancedDynamicForm.propTypes = {
+AdvancedDynamicForm.propTypes = {
   formConfig: PropTypes.shape({
     useWizard: PropTypes.bool,
     pages: PropTypes.arrayOf(PropTypes.shape({
@@ -290,7 +289,10 @@ EnhancedDynamicForm.propTypes = {
   customerOptions: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string,
     label: PropTypes.string
-  }))
+  })),
+  isEditing: PropTypes.bool,
+  onEdit: PropTypes.func,
+  onClose: PropTypes.func
 };
 
-export default EnhancedDynamicForm;
+export default AdvancedDynamicForm;

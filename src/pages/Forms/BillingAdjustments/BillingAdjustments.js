@@ -136,7 +136,7 @@ const BillingAdjustmentsPage = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: '100vw', overflowX: 'hidden' }}>
+    <Box sx={{ width: '100%', maxWidth: '2000px', margin: '0 auto', overflowX: 'hidden' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6">Billing Adjustments</Typography>
         <Button variant="contained" color="primary" onClick={handleOpenModal}>
@@ -160,7 +160,7 @@ const BillingAdjustmentsPage = () => {
       )}
 
       {!loading && !error && (
-        <Box sx={{ maxWidth: '100vw', margin: '0 auto' }}>
+        <Box sx={{ width: '100%', overflowX: 'auto' }}>
           <Tabs value={tabValue} onChange={handleChangeTab} aria-label="billing adjustment tabs">
             {formConfigs['billing-adjustment'].formTypes.map((formType, index) => (
               <Tab label={formType.name} key={formType.id} id={`simple-tab-${index}`} aria-controls={`simple-tabpanel-${index}`} />

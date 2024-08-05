@@ -5,7 +5,6 @@ import {
   Typography,
   Select,
   MenuItem,
-  Button
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import AdvancedDynamicForm from 'components/AdvancedDynamicForm';
@@ -25,8 +24,8 @@ const AdjustmentModal = ({
 
   useEffect(() => {
     if (selectedSubmission) {
-      const form = formConfigs['billing-adjustment'].formTypes.find(form => form.id === 'SolutionsBillingAdjustment');
-      setSelectedForm(form);
+      const form = formConfigs['billing-adjustment'].formTypes.find(form => form.id === selectedSubmission.formType);
+      setSelectedForm(form || null);
       setFormData(selectedSubmission.responses || {});
     } else {
       setSelectedForm(null);
@@ -42,18 +41,19 @@ const AdjustmentModal = ({
 
   const handleSubmit = (submittedFormData) => {
     onSubmit(selectedForm.id, submittedFormData);
-    setSelectedForm(null);
-    setFormData({});
+    handleClose();
   };
 
-  const handleEdit = () => {
-    onEdit();
+  const handleClose = () => {
+    setSelectedForm(null);
+    setFormData({});
+    onClose();
   };
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -70,7 +70,7 @@ const AdjustmentModal = ({
         boxShadow: 24,
         p: 4,
       }}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
           {selectedSubmission ? (isEditing ? 'Edit' : 'View') : 'New'} Billing Adjustment Form
         </Typography>
 
@@ -80,7 +80,7 @@ const AdjustmentModal = ({
             value={selectedForm ? selectedForm.id : ''}
             onChange={handleFormSelect}
             displayEmpty
-            sx={{ mt: 2, mb: 4 }} // Increased bottom margin
+            sx={{ mb: 4 }}
           >
             <MenuItem value="" disabled>
               Select Billing Adjustment Form
@@ -94,26 +94,16 @@ const AdjustmentModal = ({
         )}
 
         {selectedForm && (
-          <>
-            {selectedSubmission && !isEditing && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleEdit}
-                sx={{ mt: 2, mb: 2, mr: 2 }}
-              >
-                Edit
-              </Button>
-            )}
-
-            <AdvancedDynamicForm
-              formConfig={selectedForm}
-              onSubmit={handleSubmit}
-              initialData={formData}
-              isReadOnly={selectedSubmission && !isEditing}
-              customerOptions={customerOptions}
-            />
-          </>
+          <AdvancedDynamicForm
+            formConfig={selectedForm}
+            onSubmit={handleSubmit}
+            initialData={formData}
+            isReadOnly={selectedSubmission && !isEditing}
+            customerOptions={customerOptions}
+            isEditing={isEditing}
+            onEdit={onEdit}
+            onClose={handleClose}
+          />
         )}
       </Box>
     </Modal>
