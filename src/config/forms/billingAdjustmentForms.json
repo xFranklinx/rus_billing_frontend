@@ -118,9 +118,11 @@
           "label": "Service Line",
           "required": true,
           "options": [
-            "Option 1",
-            "Option 2",
-            "Option 3"
+            "CLUD",
+            "CEXP",
+            "DATA",
+            "DIPE",
+            "OVHD"
           ]
         },
         "didOriginalHoursEnteredInRepliconGenerateInvoice": {
@@ -135,8 +137,8 @@
           "label": "Type of Adjustment",
           "required": true,
           "options": [
-            "Credit",
-            "Debit"
+            "Credit and Rebill",
+            "Full Credit"
           ]
         },
         "netDollarAmountofAdjustmentRequested": {
@@ -163,9 +165,10 @@
           "label": "Type of Correction",
           "required": true,
           "options": [
-            "Option 1",
-            "Option 2",
-            "Option 3"
+            "Incorrect Hours",
+            "Incorrect Rate",
+            "Incorrect Time Entry (Billable/Non-Billable)",
+            "Removing Expenses"
           ]
         },
         "whyCorrectionIsNeeded": {
@@ -174,9 +177,11 @@
           "label": "Why Correction is Needed",
           "required": true,
           "options": [
-            "Reason 1",
-            "Reason 2",
-            "Reason 3"
+            "Incorreect Invoice Incidental Request Submitted",
+            "Fixed fee change not submitted in time for billing",
+            "Rate change not submitted in time for billing",
+            "Hours or Expenses were coded/approved incorrectly",
+            "Ops team setup error or delay caused incorrect billing"
           ]
         },
         "adjustmentReasonDetails": {
@@ -227,9 +232,12 @@
           "label": "Approval Level",
           "required": true,
           "options": [
-            "Level 1",
-            "Level 2",
-            "Level 3"
+            "Net $0 No Approval Required (Total Adjustment is $0)",
+            "Up to $5,000 Project Manager (RD Solutions only)",
+            "$5,001 to $9,999 Delivery Director or Practice Manager",
+            "$10,000 to $24,999 Managing/Practice Director or Industry Group Head",
+            "$25,000 to $49,999 SVP (RD Solutions only)",
+            "$50,000 and above CEO and CFO Digital or CFOUS/CFO RUS Digital"
           ]
         }
       }
