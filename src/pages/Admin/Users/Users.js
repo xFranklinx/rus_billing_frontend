@@ -23,6 +23,8 @@ const Users = () => {
     return <div>Loading...</div>
   }
 
+  console.log(users)
+
   return (
     <UsersTable usersData={users} />
   )

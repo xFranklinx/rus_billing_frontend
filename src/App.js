@@ -1,63 +1,67 @@
-import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import MainLayout from 'layouts/MainLayout/MainLayout'
-import { Login } from 'pages'
-import { AuthProvider } from 'contexts/AuthContext'
-import { ThemeProvider } from '@mui/material'
-import { lightTheme, darkTheme } from 'utils/theme'
-import { jwtDecode } from 'jwt-decode'
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import MainLayout from 'layouts/MainLayout/MainLayout';
+import { Login } from 'pages';
+import { AuthSuccessHandler } from 'components'
+import { AuthContext, AuthProvider } from 'contexts/AuthContext';
+import { ThemeProvider } from 'contexts/ThemeContext';
+import { isTokenValid } from 'utils/authUtils';
+import ErrorBoundary from 'components/ErrorBoundary';
+import logger from 'utils/logger';
 
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [darkModeActivated, setDarkModeActivated] = useState(false);
-
-  const handleThemeChange = () => {
-    setDarkModeActivated(!darkModeActivated);
-  };
-
-  const handleLogin = () => {
-    setIsAuthenticated(!isAuthenticated)
-  }
+const AppContent = () => {
+  const { user, logout, loading } = useContext(AuthContext);
 
   useEffect(() => {
-    // Retrieve the theme preference from localStorage
-    // Theme is saved from the TopNavbar component in MainLayout.js when the user toggles the theme switch
-    const retrieveTheme = () => {
-      const darkModeActivated = localStorage.getItem('theme');
-      if (darkModeActivated) {
-        setDarkModeActivated(JSON.parse(darkModeActivated));
+    const checkTokenValidity = () => {
+      const token = localStorage.getItem('token');
+      if (token && !isTokenValid(token)) {
+        logger.info('Token expired, logging out user');
+        logout();
       }
+    };
+
+    // Only start the interval if the user is logged in
+    let intervalId;
+    if (user) {
+      intervalId = setInterval(checkTokenValidity, 60000); // Check every minute
     }
-    retrieveTheme()
 
-    // Check if the token is still valid on page load. If it is, set the isAuthenticated state to true. Otherwise, remove the token from local storage.
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      try {
-        const decodedToken = jwtDecode(storedToken);
-        if (decodedToken.exp * 1000 > Date.now()) {
-          setIsAuthenticated(true);
-        } else {
-          localStorage.removeItem('token');
-        }
-      } catch (error) {
-        console.error('Error decoding token:', error);
-      }
-    }
-  }, []);
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [user, logout]);
 
-
-
+  if (loading) {
+    return <div>Loading...</div>; // or a loading spinner
+  }
 
   return (
-    <AuthProvider>
-      <ThemeProvider theme={darkModeActivated ? darkTheme : lightTheme}>
-        <Router>
-          {isAuthenticated ? <MainLayout handleLogin={handleLogin} handleThemeChange={handleThemeChange} darkModeActivated={darkModeActivated} /> : <Login handleLogin={handleLogin} />}
-        </Router>
-      </ThemeProvider>
-    </AuthProvider>
-  )
-}
+    <Router>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
+          <Route path="/auth/success" element={<AuthSuccessHandler />} />
+          <Route
+            path="/*"
+            element={user ? <MainLayout /> : <Navigate to="/login" replace />}
+          />
+        </Routes>
+      </ErrorBoundary>
+    </Router>
+  );
+};
 
-export default App
+const App = () => {
+  return (
+    <ErrorBoundary>
+      <AuthProvider>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
+      </AuthProvider>
+    </ErrorBoundary>
+  );
+};
+
+export default App;

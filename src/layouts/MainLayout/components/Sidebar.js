@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { styled, Drawer as MuiDrawer, Divider, IconButton, List, ListSubheader, Box, Tooltip, Typography } from '@mui/material/';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SidebarItem from './SidebarItem';
-import config from 'utils/config';
+import config from 'config/config';
 import sidebarLinks from 'utils/sidebarLinks';
 import { AuthContext } from 'contexts/AuthContext';
 

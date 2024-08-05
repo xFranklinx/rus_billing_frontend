@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { styled, Menu, MenuItem, AppBar as MuiAppBar, Toolbar, Typography, ListItemIcon, IconButton, Divider, Switch, FormControlLabel } from '@mui/material';
+import { styled, Box, Menu, MenuItem, AppBar as MuiAppBar, Toolbar, Typography, ListItemIcon, IconButton, Divider, Switch, FormControlLabel } from '@mui/material';
 import {
   Menu as MenuIcon,
   AccountCircle as AccountCircleIcon,
@@ -11,7 +11,8 @@ import {
   Brightness7 as Brightness7Icon
 } from '@mui/icons-material';
 import { AuthContext } from 'contexts/AuthContext';
-import config from 'utils/config';
+import { useTheme } from 'contexts/ThemeContext'; // Import the useTheme hook
+import config from 'config/config';
 
 const openedMixin = (theme) => ({
   width: config.sidebarWidth,
@@ -53,15 +54,10 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 
-const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange, darkModeActivated }) => {
+const TopNavbar = ({ sidebarOpen, handleSidebar }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const { logout } = useContext(AuthContext);
-
-  const handleLogout = () => {
-    logout();
-    handleLogin();
-    handleClose();
-  }
+  const { darkMode, toggleTheme } = useTheme();
+  const { user, logout } = useContext(AuthContext);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,18 +67,14 @@ const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange,
     setAnchorEl(null);
   };
 
-  const handleUpdateTheme = () => {
-    // Saving the theme preference to localStorage so it persists on page reload
-    if (darkModeActivated) {
-      localStorage.setItem('theme', JSON.stringify('light'));
-    } else {
-      localStorage.setItem('theme', JSON.stringify('dark'));
-    }
-
-    console.log(localStorage.getItem('theme'))
-
+  const handleLogoutClick = () => {
     handleClose();
-    handleThemeChange();
+    logout();
+  };
+
+  const handleUpdateTheme = () => {
+    toggleTheme();
+    handleClose();
   };
 
 
@@ -133,6 +125,10 @@ const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange,
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
+            <Box sx={{ px: 2, py: 1 }}>
+              <Typography variant="body2" color="text.secondary">{user?.email}</Typography>
+            </Box>
+            <Divider />
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
                 <ProfileIcon fontSize="small" />
@@ -149,14 +145,14 @@ const TopNavbar = ({ sidebarOpen, handleSidebar, handleLogin, handleThemeChange,
 
             <MenuItem onClick={handleUpdateTheme}>
               <ListItemIcon>
-                {darkModeActivated ? <Brightness7Icon fontSize="small" /> : <Brightness4Icon fontSize="small" />}
+                {darkMode ? <Brightness7Icon fontSize="small" /> : <Brightness4Icon fontSize="small" />}
               </ListItemIcon>
-              {darkModeActivated ? 'Light Mode' : 'Dark Mode'}
+              {darkMode ? 'Light Mode' : 'Dark Mode'}
             </MenuItem>
 
             <Divider />
 
-            <MenuItem onClick={handleLogout}>
+            <MenuItem onClick={handleLogoutClick}>
               <ListItemIcon>
                 <LogoutIcon fontSize="small" />
               </ListItemIcon>

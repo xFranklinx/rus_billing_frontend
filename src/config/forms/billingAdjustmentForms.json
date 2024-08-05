@@ -1,0 +1,702 @@
+{
+  "formTypes": [
+    {
+      "id": "SolutionsBillingAdjustment",
+      "name": "Solutions Billing Adjustment",
+      "description": "Use this form for solutions billing adjustments with advanced features",
+      "useWizard": true,
+      "pages": [
+        {
+          "title": "Customer Information",
+          "sections": [
+            {
+              "title": "Basic Details",
+              "layout": [
+                {
+                  "fields": [
+                    "customerId",
+                    "serviceLine"
+                  ]
+                },
+                {
+                  "fields": [
+                    "didOriginalHoursEnteredInRepliconGenerateInvoice"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Adjustment Details",
+          "sections": [
+            {
+              "title": "Adjustment Information",
+              "layout": [
+                {
+                  "fields": [
+                    "typeOfAdjustment",
+                    "netDollarAmountofAdjustmentRequested"
+                  ]
+                },
+                {
+                  "fields": [
+                    "isAdditionalIncidentalRequestRequired",
+                    "isRoaRequired"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Correction Details",
+              "layout": [
+                {
+                  "fields": [
+                    "typeOfCorrection",
+                    "whyCorrectionIsNeeded"
+                  ]
+                },
+                {
+                  "fields": [
+                    "adjustmentReasonDetails"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Submission Details",
+          "sections": [
+            {
+              "title": "Submission Information",
+              "layout": [
+                {
+                  "fields": [
+                    "submittedOnBehalfOf",
+                    "invoicesToBeAdjusted"
+                  ]
+                },
+                {
+                  "fields": [
+                    "resourceNameAndWeekEndingDatesAdjustmentIsFor"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Approval Information",
+              "layout": [
+                {
+                  "fields": [
+                    "approversFullName",
+                    "approversTitle"
+                  ]
+                },
+                {
+                  "fields": [
+                    "approversEmailAddress",
+                    "approvalLevel"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fields": {
+        "customerId": {
+          "id": "customerId",
+          "type": "select",
+          "label": "Customer",
+          "required": true,
+          "options": []
+        },
+        "serviceLine": {
+          "id": "serviceLine",
+          "type": "select",
+          "label": "Service Line",
+          "required": true,
+          "options": [
+            "Option 1",
+            "Option 2",
+            "Option 3"
+          ]
+        },
+        "didOriginalHoursEnteredInRepliconGenerateInvoice": {
+          "id": "didOriginalHoursEnteredInRepliconGenerateInvoice",
+          "type": "checkbox",
+          "label": "Did original hours entered in Replicon generate invoice?",
+          "required": true
+        },
+        "typeOfAdjustment": {
+          "id": "typeOfAdjustment",
+          "type": "select",
+          "label": "Type of Adjustment",
+          "required": true,
+          "options": [
+            "Credit",
+            "Debit"
+          ]
+        },
+        "netDollarAmountofAdjustmentRequested": {
+          "id": "netDollarAmountofAdjustmentRequested",
+          "type": "number",
+          "label": "Net Dollar Amount of Adjustment Requested",
+          "required": true
+        },
+        "isAdditionalIncidentalRequestRequired": {
+          "id": "isAdditionalIncidentalRequestRequired",
+          "type": "checkbox",
+          "label": "Is Additional Incidental Request Required?",
+          "required": true
+        },
+        "isRoaRequired": {
+          "id": "isRoaRequired",
+          "type": "checkbox",
+          "label": "Is ROA Required?",
+          "required": true
+        },
+        "typeOfCorrection": {
+          "id": "typeOfCorrection",
+          "type": "select",
+          "label": "Type of Correction",
+          "required": true,
+          "options": [
+            "Option 1",
+            "Option 2",
+            "Option 3"
+          ]
+        },
+        "whyCorrectionIsNeeded": {
+          "id": "whyCorrectionIsNeeded",
+          "type": "select",
+          "label": "Why Correction is Needed",
+          "required": true,
+          "options": [
+            "Reason 1",
+            "Reason 2",
+            "Reason 3"
+          ]
+        },
+        "adjustmentReasonDetails": {
+          "id": "adjustmentReasonDetails",
+          "type": "textarea",
+          "label": "Adjustment Reason Details",
+          "required": true
+        },
+        "submittedOnBehalfOf": {
+          "id": "submittedOnBehalfOf",
+          "type": "text",
+          "label": "Submitted on Behalf of",
+          "required": true
+        },
+        "invoicesToBeAdjusted": {
+          "id": "invoicesToBeAdjusted",
+          "type": "text",
+          "label": "Invoices to be Adjusted",
+          "required": true
+        },
+        "resourceNameAndWeekEndingDatesAdjustmentIsFor": {
+          "id": "resourceNameAndWeekEndingDatesAdjustmentIsFor",
+          "type": "textarea",
+          "label": "Resource Name and Week Ending Dates Adjustment is For",
+          "required": true
+        },
+        "approversFullName": {
+          "id": "approversFullName",
+          "type": "text",
+          "label": "Approver's Full Name",
+          "required": true
+        },
+        "approversTitle": {
+          "id": "approversTitle",
+          "type": "text",
+          "label": "Approver's Title",
+          "required": true
+        },
+        "approversEmailAddress": {
+          "id": "approversEmailAddress",
+          "type": "email",
+          "label": "Approver's Email Address",
+          "required": true
+        },
+        "approvalLevel": {
+          "id": "approvalLevel",
+          "type": "select",
+          "label": "Approval Level",
+          "required": true,
+          "options": [
+            "Level 1",
+            "Level 2",
+            "Level 3"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ProjectBillingAdjustment",
+      "name": "Project Billing Adjustment",
+      "description": "Use this form for billing adjustments related to specific projects",
+      "useWizard": true,
+      "pages": [
+        {
+          "title": "Project Information",
+          "sections": [
+            {
+              "title": "Project Details",
+              "layout": [
+                {
+                  "fields": [
+                    "customerId",
+                    "projectId"
+                  ]
+                },
+                {
+                  "fields": [
+                    "projectName",
+                    "projectManager"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Adjustment Details",
+          "sections": [
+            {
+              "title": "Billing Adjustment",
+              "layout": [
+                {
+                  "fields": [
+                    "adjustmentType",
+                    "adjustmentAmount"
+                  ]
+                },
+                {
+                  "fields": [
+                    "affectedMilestone",
+                    "adjustmentReason"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Impact Assessment",
+              "layout": [
+                {
+                  "fields": [
+                    "impactOnProjectTimeline",
+                    "impactOnProjectBudget"
+                  ]
+                },
+                {
+                  "fields": [
+                    "additionalComments"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Approval",
+          "sections": [
+            {
+              "title": "Requester Information",
+              "layout": [
+                {
+                  "fields": [
+                    "requesterName",
+                    "requesterRole"
+                  ]
+                },
+                {
+                  "fields": [
+                    "requesterEmail"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Approval Chain",
+              "layout": [
+                {
+                  "fields": [
+                    "projectManagerApproval",
+                    "financeManagerApproval"
+                  ]
+                },
+                {
+                  "fields": [
+                    "clientApprovalRequired",
+                    "clientApprovalStatus"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fields": {
+        "customerId": {
+          "id": "customerId",
+          "type": "select",
+          "label": "Customer",
+          "required": true,
+          "options": []
+        },
+        "projectId": {
+          "id": "projectId",
+          "type": "text",
+          "label": "Project ID",
+          "required": true
+        },
+        "projectName": {
+          "id": "projectName",
+          "type": "text",
+          "label": "Project Name",
+          "required": true
+        },
+        "projectManager": {
+          "id": "projectManager",
+          "type": "text",
+          "label": "Project Manager",
+          "required": true
+        },
+        "adjustmentType": {
+          "id": "adjustmentType",
+          "type": "select",
+          "label": "Adjustment Type",
+          "required": true,
+          "options": [
+            "Cost Overrun",
+            "Scope Change",
+            "Milestone Delay",
+            "Early Completion Bonus"
+          ]
+        },
+        "adjustmentAmount": {
+          "id": "adjustmentAmount",
+          "type": "number",
+          "label": "Adjustment Amount",
+          "required": true
+        },
+        "affectedMilestone": {
+          "id": "affectedMilestone",
+          "type": "text",
+          "label": "Affected Milestone",
+          "required": true
+        },
+        "adjustmentReason": {
+          "id": "adjustmentReason",
+          "type": "textarea",
+          "label": "Adjustment Reason",
+          "required": true
+        },
+        "impactOnProjectTimeline": {
+          "id": "impactOnProjectTimeline",
+          "type": "select",
+          "label": "Impact on Project Timeline",
+          "required": true,
+          "options": [
+            "No Impact",
+            "Minor Delay",
+            "Major Delay",
+            "Expedited"
+          ]
+        },
+        "impactOnProjectBudget": {
+          "id": "impactOnProjectBudget",
+          "type": "select",
+          "label": "Impact on Project Budget",
+          "required": true,
+          "options": [
+            "Within Budget",
+            "Slight Overage",
+            "Significant Overage",
+            "Under Budget"
+          ]
+        },
+        "additionalComments": {
+          "id": "additionalComments",
+          "type": "textarea",
+          "label": "Additional Comments",
+          "required": false
+        },
+        "requesterName": {
+          "id": "requesterName",
+          "type": "text",
+          "label": "Requester Name",
+          "required": true
+        },
+        "requesterRole": {
+          "id": "requesterRole",
+          "type": "text",
+          "label": "Requester Role",
+          "required": true
+        },
+        "requesterEmail": {
+          "id": "requesterEmail",
+          "type": "email",
+          "label": "Requester Email",
+          "required": true
+        },
+        "projectManagerApproval": {
+          "id": "projectManagerApproval",
+          "type": "checkbox",
+          "label": "Project Manager Approval",
+          "required": true
+        },
+        "financeManagerApproval": {
+          "id": "financeManagerApproval",
+          "type": "checkbox",
+          "label": "Finance Manager Approval",
+          "required": true
+        },
+        "clientApprovalRequired": {
+          "id": "clientApprovalRequired",
+          "type": "checkbox",
+          "label": "Client Approval Required",
+          "required": true
+        },
+        "clientApprovalStatus": {
+          "id": "clientApprovalStatus",
+          "type": "select",
+          "label": "Client Approval Status",
+          "required": false,
+          "options": [
+            "Not Applicable",
+            "Pending",
+            "Approved",
+            "Rejected"
+          ]
+        }
+      }
+    },
+    {
+      "id": "RecurringBillingAdjustment",
+      "name": "Recurring Billing Adjustment",
+      "description": "Use this form for adjustments to recurring billing arrangements",
+      "useWizard": true,
+      "pages": [
+        {
+          "title": "Customer and Service Information",
+          "sections": [
+            {
+              "title": "Customer Details",
+              "layout": [
+                {
+                  "fields": [
+                    "customerId",
+                    "accountNumber"
+                  ]
+                },
+                {
+                  "fields": [
+                    "billingFrequency",
+                    "currentBillingAmount"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Adjustment Details",
+          "sections": [
+            {
+              "title": "Billing Change",
+              "layout": [
+                {
+                  "fields": [
+                    "adjustmentType",
+                    "newBillingAmount"
+                  ]
+                },
+                {
+                  "fields": [
+                    "effectiveDate",
+                    "endDate"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Reason for Change",
+              "layout": [
+                {
+                  "fields": [
+                    "changeReason",
+                    "serviceImpact"
+                  ]
+                },
+                {
+                  "fields": [
+                    "additionalNotes"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Approval and Notification",
+          "sections": [
+            {
+              "title": "Internal Approval",
+              "layout": [
+                {
+                  "fields": [
+                    "requestedBy",
+                    "approvedBy"
+                  ]
+                },
+                {
+                  "fields": [
+                    "financeDepartmentNotified"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Customer Communication",
+              "layout": [
+                {
+                  "fields": [
+                    "customerNotificationRequired",
+                    "customerNotificationDate"
+                  ]
+                },
+                {
+                  "fields": [
+                    "customerAcknowledgement"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fields": {
+        "customerId": {
+          "id": "customerId",
+          "type": "select",
+          "label": "Customer",
+          "required": true,
+          "options": []
+        },
+        "accountNumber": {
+          "id": "accountNumber",
+          "type": "text",
+          "label": "Account Number",
+          "required": true
+        },
+        "billingFrequency": {
+          "id": "billingFrequency",
+          "type": "select",
+          "label": "Billing Frequency",
+          "required": true,
+          "options": [
+            "Monthly",
+            "Quarterly",
+            "Semi-Annually",
+            "Annually"
+          ]
+        },
+        "currentBillingAmount": {
+          "id": "currentBillingAmount",
+          "type": "number",
+          "label": "Current Billing Amount",
+          "required": true
+        },
+        "adjustmentType": {
+          "id": "adjustmentType",
+          "type": "select",
+          "label": "Adjustment Type",
+          "required": true,
+          "options": [
+            "Price Increase",
+            "Price Decrease",
+            "Service Upgrade",
+            "Service Downgrade",
+            "Promotional Offer"
+          ]
+        },
+        "newBillingAmount": {
+          "id": "newBillingAmount",
+          "type": "number",
+          "label": "New Billing Amount",
+          "required": true
+        },
+        "effectiveDate": {
+          "id": "effectiveDate",
+          "type": "date",
+          "label": "Effective Date",
+          "required": true
+        },
+        "endDate": {
+          "id": "endDate",
+          "type": "date",
+          "label": "End Date (if applicable)",
+          "required": false
+        },
+        "changeReason": {
+          "id": "changeReason",
+          "type": "textarea",
+          "label": "Reason for Change",
+          "required": true
+        },
+        "serviceImpact": {
+          "id": "serviceImpact",
+          "type": "textarea",
+          "label": "Impact on Service",
+          "required": true
+        },
+        "additionalNotes": {
+          "id": "additionalNotes",
+          "type": "textarea",
+          "label": "Additional Notes",
+          "required": false
+        },
+        "requestedBy": {
+          "id": "requestedBy",
+          "type": "text",
+          "label": "Requested By",
+          "required": true
+        },
+        "approvedBy": {
+          "id": "approvedBy",
+          "type": "text",
+          "label": "Approved By",
+          "required": true
+        },
+        "financeDepartmentNotified": {
+          "id": "financeDepartmentNotified",
+          "type": "checkbox",
+          "label": "Finance Department Notified",
+          "required": true
+        },
+        "customerNotificationRequired": {
+          "id": "customerNotificationRequired",
+          "type": "checkbox",
+          "label": "Customer Notification Required",
+          "required": true
+        },
+        "customerNotificationDate": {
+          "id": "customerNotificationDate",
+          "type": "date",
+          "label": "Customer Notification Date",
+          "required": false
+        },
+        "customerAcknowledgement": {
+          "id": "customerAcknowledgement",
+          "type": "checkbox",
+          "label": "Customer Acknowledgement Received",
+          "required": false
+        }
+      }
+    }
+  ]
+}

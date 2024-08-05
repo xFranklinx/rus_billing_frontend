@@ -11,7 +11,7 @@ export { default as SqlVision } from './Automations/SqlVision/SqlVision.js';
 export { default as VOP } from './Automations/VOP/VOP.js';
 
 // FORMS
-export { default as SolutionsAdjustments } from './Forms/SolutionsAdjustments/SolutionsAdjustments.js';
+export { default as SolutionsAdjustments } from './Forms/BillingAdjustments/BillingAdjustments.js';
 
 // ADMIN
 export { default as Users } from './Admin/Users/Users.js';

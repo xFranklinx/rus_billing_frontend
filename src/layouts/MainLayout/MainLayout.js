@@ -20,7 +20,7 @@ import {
   Unauthorized,
   NotFound404
 } from 'pages';
-import ProtectedRoute from 'components/ProtectedRoute';
+import { ProtectedRoute, AuthSuccessHandler } from 'components/';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -49,6 +49,8 @@ const MainLayout = ({ handleLogin, handleThemeChange, darkModeActivated }) => {
         <DrawerHeader />
 
         <Routes>
+          {/* Auth */}
+          <Route path="/auth/success" element={<AuthSuccessHandler />} />
           {/* Main */}
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />

@@ -1,57 +1,76 @@
 import axios from 'axios';
+import authService from 'services/authService';
+import logger from 'utils/logger'
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const api = axios.create({
   baseURL: API_URL,
 });
 
+export const setAuthToken = (token) => {
+  try {
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      localStorage.setItem('token', token);
+      logger.info('Auth token set successfully');
+      logger.debug('Token:', token);
+    } else {
+      delete api.defaults.headers.common['Authorization'];
+      localStorage.removeItem('token');
+      logger.info('Auth token removed');
+    }
+  } catch (error) {
+    logger.error('Error setting auth token:', error);
+    throw error;
+  }
+};
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const newToken = await authService.refreshToken();
+        setAuthToken(newToken);
+        return api(originalRequest);
+      } catch (refreshError) {
+        setAuthToken(null);
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const apiCall = async (method, endpoint, data = null, params = null) => {
   try {
-    const token = localStorage.getItem('token');
-
     const config = {
-      method: method,
+      method,
       url: endpoint,
       headers: {
         'Content-Type': 'application/json',
       },
+      data,
+      params,
     };
-
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    if (data) {
-      config.data = data;
-    }
-
-    if (params) {
-      config.params = params;
-    }
 
     const response = await api(config);
     return response.data;
   } catch (error) {
-    // Handle errors (e.g., unauthorized, network issues)
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error("Error data:", error.response.data);
-      console.error("Error status:", error.response.status);
-      console.error("Error headers:", error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("Error request:", error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error('Error message:', error.message);
-    }
-    throw error; // Re-throw the error so it can be caught and handled by the caller
+    console.error('API call error:', error);
+    throw error;
   }
 };
 
-//** PREDEFINED API CALLS **//
+// Initialize token on app load
+setAuthToken(localStorage.getItem('token'));
+
+// AUTH
+export const googleAuth = () => apiCall('GET', '/v1/auth/google');
 
 // USERS
 export const getUsers = () => apiCall('GET', '/v1/users');
@@ -69,4 +88,7 @@ export const updateCustomer = (customerId, customerData) => apiCall('PUT', `/v1/
 export const deleteCustomer = (customerId) => apiCall('DELETE', `/v1/customers/${customerId}`);
 
 // FORMS
-export const getAllSolutionBillingAdjustments = () => apiCall('GET', '/v1/forms/solutionsBillingAdjustments');
+export const getAllBillingAdjustments = (params) => apiCall('GET', '/v1/forms/billingAdjustments', null, params);
+export const createBillingAdjustment = (adjustmentData, params) => apiCall('POST', '/v1/forms/billingAdjustments', adjustmentData, params);
+export const updateBillingAdjustment = (adjustmentId, adjustmentData, params) => apiCall('PUT', `/v1/forms/billingAdjustments/${adjustmentId}`, adjustmentData, params);
+export const getBillingAdjustmentById = (adjustmentId) => apiCall('GET', `/v1/forms/billingAdjustments/${adjustmentId}`);
